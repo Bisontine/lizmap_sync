@@ -18,7 +18,7 @@ fi
   # appel de rsync_owncloud.sh
   bash /home/lizmap/bin/rsync_owncloud.sh 1&2>>/var/log/lizmap_sync/sync_data.log
 
-) 200>/var/lock/.geosync.exclusivelock
+) 200>/var/lock/.lizmap_sync.exclusivelock
 
 
 # à inclure dans un crontab
