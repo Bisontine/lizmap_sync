@@ -60,6 +60,7 @@ my $repository = NFD($repository0);		# Utiliser forcément une variable de sorti
 $repository =~ s/\p{Mn}//g;
 $repository =~ s/[^\w]+//g;			# A mettre après la suppression des accents car supprime les lettres qui en comportent
 $repository =~ s/(_|\.)+//g;
+$repository =~ s/(.+)/\L$1/gi;     		# Met tout en minuscules
 print LOG "Identifiant : ${repository} \n";
 
 ## ----- Création de l'objet Mechanize ------

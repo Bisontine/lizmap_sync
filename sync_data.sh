@@ -3,11 +3,6 @@
 # si semble non monté alors on monte le webdav
 # attention : ne pas faire précéder ce code par le flock (ci-dessous) car sinon semble ne pas supprimer le verrou
 
-# avec autofs
-if [ ! -d ~/owncloud/owncloud ]; then
-   cd ~/owncloud/owncloud
-fi
-
 # utilisation d'un verrou pour éviter que le script sync_data.sh ne se lance plusieurs fois en même temps
 (
   # Wait for lock on /var/lock/.myscript.exclusivelock (fd 200) for 10 seconds
@@ -18,7 +13,7 @@ fi
   # appel de rsync_owncloud.sh
   bash /home/lizmap/bin/rsync_owncloud.sh 1&2>>/var/log/lizmap_sync/sync_data.log
 
-) 200>/var/lock/.lizmap_sync.exclusivelock
+) 200>/var/lock/lizmap_sync.exclusivelock
 
 
 # à inclure dans un crontab
