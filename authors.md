@@ -1,6 +1,6 @@
 ![Plateforme géomatique de Bourgogne Franche-Comté GeoBFC](images/geobfc.jpg)
 
-GeoSync was originally created in 2015 by Sophie Mollard. She is engineer at Maison des Sciences de l’Homme et de l’environnement C. N. Ledoux, since septembre 2015.
+Lizmap_Sync was originally created in 2015 by Sophie Mollard. She is engineer at Maison des Sciences de l’Homme et de l’environnement C. N. Ledoux, since septembre 2015.
 
     Sophie MOLLARD <sophie.mollard@univ-fcomte.fr>
 
