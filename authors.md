@@ -1,9 +1,8 @@
 ![Plateforme géomatique de Bourgogne Franche-Comté GeoBFC](images/geobfc.jpg)
 
-GeoSync was originally created in 2015 by Alexandre Maindron and Martin Tovmassian.
+Lizmap_Sync was originally created in 2016 by Sophie Mollard.
 
-    Alexandre MAINDRON <alexandre@exmackina.com>
-    Martin TOVMASSIAN <martin.tovmassian@gmail.com>
+    Sophie MOLLARD <sophie.mollard@univ-fcomte.fr>
 
 The code is currently written and maintened by Sophie Mollard.
 
