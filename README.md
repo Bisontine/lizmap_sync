@@ -1,4 +1,4 @@
-Lizmap_Sync allows you to share spatial data on OwnCloud and to publish them on the web.
+Lizmap_Sync allows you to share spatial data on OwnCloud and to publish them on the web, thanks to a Lizmap server.
 
 Pre-requisites :
 - QGIS Desktop 2.12 and its Lizmap plugin ;
