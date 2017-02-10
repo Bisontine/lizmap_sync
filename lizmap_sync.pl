@@ -69,20 +69,43 @@ my $mech = WWW::Mechanize->new();
 
 ## ----- Identification sur le site internet -----
 
-my $url = "http://193.55.67.162/lm/admin.php/admin/config/editSection";
+my $url = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/";
+my $passFilePath = "/home/lizmap/.lizmappass";
+my %credentials;
+try {
+        %credentials = get_credentials($passFilePath);
+        defined($credentials{login}) or die $!;
+        defined($credentials{password}) or die $!;
+
+} catch {
+        print LOG "Impossible de lire le login ou mot de passe pour lizmap\n";
+        print LOG "error : $_ ";
+        exit;
+};
 try {
 	$mech->get( $url );                       # Accès à l'url
 	$mech->form_id("loginForm");              # Accès au formulaire
-	$mech->field("login","admin");            # Accès au champ
-	$mech->field("password","admin");
+        $mech->field("login",$credentials{login});            # Accès au champ
+	$mech->field("password",$credentials{password});
 	$mech->field("rememberMe","1");
 
 	$mech->click;                             # Envoi du formulaire en cliquant sur le premier bouton
 } catch {
-	print LOG "Impossible de s'identifier sur Lizmap";
+	print LOG "Impossible de s'identifier sur Lizmap\n";
 	print LOG "error : $_ ";
         exit;
 };
+
+sub get_credentials {
+  my ($file) = @_;
+  open my $fh, "<", $file or die $!;
+
+  my $line = <$fh>;
+  chomp($line);
+  my ($login, $password) = split /:/, $line;
+
+  return (login => $login, password => $password);
+}
 
 ## ----- Suite des actions sur le site internet selon l'action -----
 my $event_type = $ARGV[0];
@@ -90,7 +113,7 @@ if ($event_type =~ m/IN_CREATE/){
 
 	## ----- Publication du répertoire -----
 	
-	my $url2 = "http://193.55.67.162/lm/admin.php/admin/config/createSection";
+	my $url2 = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/createSection";
 	try {
 		$mech->get( $url2 );
 	} catch {
@@ -127,7 +150,7 @@ if ($event_type =~ m/IN_CREATE/){
 
 	# ----- Attribution des droits -----
 
-	my $url3 = "http://193.55.67.162/lm/admin.php/admin/config/modifySection?repository=${repository}";
+	my $url3 = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/modifySection?repository=${repository}";
 
 	try{
         	$mech->get( $url3 );
@@ -172,7 +195,7 @@ if ($event_type =~ m/IN_CREATE/){
 
 	## ----- Vérification de l'existence du répertoire publié -----
 
-	my $url2 = "http://193.55.67.162/lm/admin.php/admin/config/modifySection/?repository=${repository}";
+	my $url2 = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/modifySection/?repository=${repository}";
 	try{
 	        $mech->get( $url2 );
 	} catch {
@@ -183,7 +206,7 @@ if ($event_type =~ m/IN_CREATE/){
 
 	## ----- Suppression du répertoire -----
 
-	my $url3 = "http://193.55.67.162/lm/admin.php/admin/config/removeSection?repository=${repository}";
+	my $url3 = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/removeSection?repository=${repository}";
 	try{
 	        $mech->get( $url3 );
 	} catch {
