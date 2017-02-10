@@ -70,7 +70,7 @@ my $mech = WWW::Mechanize->new();
 ## ----- Identification sur le site internet -----
 
 my $url = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/";
-my $passFilePath = "/home/lizmap/.lizmappass";
+my $passFilePath = "/home/lizmap/.lizmappass"; ## le fichier doit contenir : "lelogin:lepassword"
 my %credentials;
 try {
         %credentials = get_credentials($passFilePath);
