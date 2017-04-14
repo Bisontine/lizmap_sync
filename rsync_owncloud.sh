@@ -26,7 +26,7 @@ fi
 
 #synchronise les fichiers du montage webdav pour être plus performant
 #rsync -avr --delete '/home/lizmap/owncloud/owncloud' '/home/lizmap/owncloud_sync/'
-cmd="rsync -avr --delete --exclude 'lost+found' '$INPUT_OUTPUT_PATH/' '$INPUT_COPY_PATH/'"
+cmd="rsync -avr --delete --exclude 'lost+found' --exclude _unpublished '$INPUT_OUTPUT_PATH/' '$INPUT_COPY_PATH/'"
 echo $cmd
 eval $cmd
 
