@@ -10,6 +10,15 @@ use Try::Tiny;
 use Unicode::Normalize; # for NFD()
 use Encode; 		# for decode_utf8()
 use utf8;
+use Fcntl qw(:flock);  # pour le verrouillage de fichier
+
+# utilisation d'un verrou pour éviter que le script ne se lance plusieurs fois en même temps (en particulier avec incron)
+my $verrou = '/var/lock/lyzmap_sync.exclusivelock';
+
+open(LOCK, ">>", "$verrou") || die "ERROR openning $verrou\n";
+# Wait for lock
+flock LOCK, LOCK_EX;
+
 
 my $log = "/var/log/lizmap_sync/lizmap_sync.log";
 open(LOG,">>$log") or die "cannot open $log";
@@ -67,34 +76,57 @@ print LOG "Identifiant : ${repository} \n";
 
 my $mech = WWW::Mechanize->new();
 
-## ----- Identification sur le site internet -----
+## ----- Identification sur le site internet si besoin -----
 
-my $url = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/";
-my $passFilePath = "/home/lizmap/.lizmappass"; ## le fichier doit contenir : "lelogin:lepassword"
-my %credentials;
-try {
-        %credentials = get_credentials($passFilePath);
-        defined($credentials{login}) or die $!;
-        defined($credentials{password}) or die $!;
+## test si déjà logué sinon essaye de s'identifier
 
-} catch {
-        print LOG "Impossible de lire le login ou mot de passe pour lizmap\n";
-        print LOG "error : $_ ";
-        exit;
-};
-try {
-	$mech->get( $url );                       # Accès à l'url
-	$mech->form_id("loginForm");              # Accès au formulaire
-        $mech->field("login",$credentials{login});            # Accès au champ
-	$mech->field("password",$credentials{password});
-	$mech->field("rememberMe","1");
+if (!is_authenticated()) {
+	authentify();
+} 
 
-	$mech->click;                             # Envoi du formulaire en cliquant sur le premier bouton
-} catch {
-	print LOG "Impossible de s'identifier sur Lizmap\n";
-	print LOG "error : $_ ";
-        exit;
-};
+sub is_authenticated {
+    my $is_authenticated = 0;
+	try {
+		my $response = $mech->get( "https://lizmap-mshe.univ-fcomte.fr/admin.php/master_admin/" );
+		if ($response->is_success) {
+			if ( $response->decoded_content =~ /user_login/ ) { ## si le contenu de la page retournée contient une certaine chaine, considére qu'on est authentifié
+			$is_authenticated = 1;
+			}
+		}
+	} catch {
+
+	};
+	return $is_authenticated;
+}
+
+sub authentify {
+	my $url = "https://lizmap-mshe.univ-fcomte.fr/lm/admin.php/admin/config/";
+	my $passFilePath = "/home/lizmap/.lizmappass"; ## le fichier doit contenir : "lelogin:lepassword"
+	my %credentials;
+	try {
+			%credentials = get_credentials($passFilePath);
+			defined($credentials{login}) or die $!;
+			defined($credentials{password}) or die $!;
+
+	} catch {
+			print LOG "Impossible de lire le login ou mot de passe pour lizmap\n";
+			print LOG "error : $_ ";
+			exit;
+	};
+	try {
+		$mech->get( $url );                       # Accès à l'url
+		$mech->form_id("loginForm");              # Accès au formulaire
+			$mech->field("login",$credentials{login});            # Accès au champ
+		$mech->field("password",$credentials{password});
+		$mech->field("rememberMe","1");
+
+		$mech->click;                             # Envoi du formulaire en cliquant sur le premier bouton
+	} catch {
+		print LOG "Impossible de s'identifier sur Lizmap\n";
+		print LOG "error : $_ ";
+			exit;
+	};
+}
 
 sub get_credentials {
   my ($file) = @_;
@@ -221,4 +253,6 @@ if ($event_type =~ m/IN_CREATE/){
 }
 
 close LOG ;
+
+close LOCK;
 
