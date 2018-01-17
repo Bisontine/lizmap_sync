@@ -28,20 +28,19 @@ my $datestring = localtime();
 print LOG $datestring;
 print LOG "\n";
 
-my $arg1 = decode_utf8($ARGV[1]);		# Le decode_utf8 permet l'affichage des caractères spéciaux des chaines issues d'arguments
-
 ## ---- Vérification des paramètres d'entrée -----
 
 if (@ARGV == 0) {
 	print LOG "Aucun argument n'est renseigné !!";
 	exit;
-} elsif (@ARGV ==1) {
-        print LOG "Il y n'y a qu'un argument en entrée !! \n 2er argument : ${ARGV[0]} !!";
-        exit;
+} elsif (@ARGV == 1) {
+        print LOG "Un seul argument en entrée : ${ARGV[0]}\n";
 } elsif (@ARGV > 2) {
-	print LOG "Il y a plus de deux arguments en entrée !! \n 1er argument : ${ARGV[0]}  -  2ème argument : ${arg1} !!";
+	print LOG "Il y a plus de deux arguments en entrée !! \n 1er argument : ${ARGV[0]}  -  2ème argument : ${ARGV[1]} - et un 3ème ${ARGV[2]} au moins... !!";
 	exit;
 } else {
+        # 2 arguments
+        my $arg1 = decode_utf8($ARGV[1]);     # Le decode_utf8 permet l'affichage des caractères spéciaux des chaines issues d'arguments
 	print LOG "Arguments réceptionnés : ${ARGV[0]}  -  ${arg1} \n";
 }	
 
@@ -80,7 +79,7 @@ my $mech = WWW::Mechanize->new();
 
 ## test si déjà logué sinon essaye de s'identifier
 
-if (!is_authenticated()) {
+if (! is_authenticated()) {
 	authentify();
 } 
 
@@ -157,7 +156,7 @@ if ($event_type =~ m/IN_CREATE/){
 	my $label = $ARGV[1];	
 	my $label_log = decode_utf8($label);
 	print LOG "Label : ${label_log} \n";
-	my $path = "/home/lizmap/owncloud_sync/${label}/";
+	my $path = "/home/lizmap/owncloudsync/${label}/";
 	my $path_log = decode_utf8($path);
 	if (-d $path) {
 	        print LOG "Répertoire trouvé : ${path_log}";
